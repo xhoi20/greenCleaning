@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shto Order Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <h1>Shto Order Item</h1>
+    <form th:action="@{/order-items/add}" th:object="${orderItemCreateDTO}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+            <label class="form-label">Order ID</label>
+            <select class="form-select" th:field="*{orderId}" required>
+                <option value="">Zgjedh Order-in</option>
+                <option th:each="order : ${orders}" th:value="${order.id}" th:text="${order.id + ' - ' + order.customer?.firstName + ' ' + order.customer?.lastName}">N/A</option>
+            </select>
+            <span th:if="${#fields.hasErrors('orderId')}" th:errors="*{orderId}" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Përshkrimi i Item-it</label>
+            <input type="text" th:field="*{itemDescription}" class="form-control" required/>
+            <span th:if="${#fields.hasErrors('itemDescription')}" th:errors="*{itemDescription}" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Sasia</label>
+            <input type="number" th:field="*{quantity}" class="form-control" min="1" required/>
+            <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Çmimi Unit</label>
+            <input type="number" step="0.01" min="0" th:field="*{unitPrice}" class="form-control" required/>
+            <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Ruaj</button>
+        <a href="/order-items" class="btn btn-secondary">Kthehu</a>
+    </form>
+
+    <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}">Gabim</div>
+    <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}">Sukses</div>
+</div>
+</body>
+</html>

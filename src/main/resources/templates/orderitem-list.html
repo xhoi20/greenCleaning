@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Lista e Order Items</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+  <h1>Lista e Order Items</h1>
+  <div class="mb-2">
+    <a th:href="@{/orders}" class="btn btn-warning btn-sm me-2">FAQJA E POROSIVE</a>
+  </div>
+  <div th:if="${role == 'ADMIN'}">
+    <a href="/order-items/add" class="btn btn-primary mb-3">Shto Order Item</a>
+  </div>
+  <div th:if="${firstName}">
+    <p>Mirë se vini, <span th:text="${firstName}"></span>! (Roli: <span th:text="${role}"></span>)</p>
+    <a th:href="@{/login}">Dil</a>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Order ID</th>
+      <th>Përshkrimi i Item-it</th>
+      <th>Sasia</th>
+      <th>Çmimi Unit</th>
+      <th>Subtotal</th>
+      <th>Tag ID</th>
+      <th th:if="${role == 'ADMIN'}">Veprime</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="orderItem : ${orderItems}">
+      <td th:text="${orderItem.id}"></td>
+      <td th:text="${orderItem.order?.id}">N/A</td>
+      <td th:text="${orderItem.itemDescription}"></td>
+      <td th:text="${orderItem.quantity}"></td>
+      <td th:text="${orderItem.unitPrice}"></td>
+      <td th:text="${orderItem.subtotal}"></td>
+      <td th:text="${orderItem.tagId}"></td>
+      <td th:if="${role == 'ADMIN'}">
+        <a th:href="@{/order-items/edit/{id}(id=${orderItem.id})}" class="btn btn-warning btn-sm">Ndrysho</a>
+        <a th:href="@{/order-items/delete/{id}(id=${orderItem.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Je i sigurt?')">Fshij</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div th:if="${orderIdFilter}" class="alert alert-info">
+    Filtruar sipas Order ID: <span th:text="${orderIdFilter}"></span>
+  </div>
+</div>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch('/order-items', {
+      method: 'GET',
+      credentials: 'include'
+    })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+  });
+</script>
+</body>
+</html>

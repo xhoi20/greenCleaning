@@ -1,0 +1,127 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title th:text="${supply.id} != 0 ? 'Edit Supply' : 'New Supply'"></title>-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1 th:text="${supply.id} != 0 ? 'Edit Supply' : 'New Supply'"></h1>-->
+
+<!--<form th:action="@{/supplies}"-->
+<!--      method="post"-->
+<!--      th:object="${supply}">-->
+
+<!--  &lt;!&ndash; shumë e rëndësishme që id të vijë në POST &ndash;&gt;-->
+<!--  <input type="hidden" th:field="*{id}"/>-->
+
+<!--  <label>Name:</label>-->
+<!--  <input type="text" th:field="*{name}" required/>-->
+<!--  <br/>-->
+
+<!--  <label>Description:</label>-->
+<!--  <textarea th:field="*{description}"></textarea>-->
+<!--  <br/>-->
+
+<!--  <label>Unit:</label>-->
+<!--  <select th:field="*{unit}">-->
+<!--    <option th:each="u : ${units}"-->
+<!--            th:value="${u}"-->
+<!--            th:text="${u}">-->
+<!--    </option>-->
+<!--  </select>-->
+<!--  <br/>-->
+
+<!--  <label>Reorder level:</label>-->
+<!--  <input type="number" th:field="*{reorderLevel}"/>-->
+<!--  <br/>-->
+
+<!--  <label>Current stock:</label>-->
+<!--  <input type="number" th:field="*{currentStock}"/>-->
+<!--  <br/>-->
+
+<!--  <button type="submit">Save</button>-->
+<!--  <a th:href="@{/supplies}">Cancel</a>-->
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${supply.id} != 0 ? 'Edit Supply' : 'New Supply'"></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <style>
+    body { background: #f6f8fb; }
+    .page-title { font-weight: 700; }
+    .card { border: 0; box-shadow: 0 10px 30px rgba(0,0,0,.06); border-radius: 16px; }
+    .form-label { font-weight: 600; }
+  </style>
+</head>
+
+<body>
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="page-title mb-1" th:text="${supply.id} != 0 ? 'Edit Supply' : 'New Supply'"></h1>
+      <div class="text-muted">Fill the details below</div>
+    </div>
+    <a class="btn btn-outline-secondary" th:href="@{/supplies}">← Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+
+      <form th:action="@{/supplies}" method="post" th:object="${supply}">
+        <!-- shumë e rëndësishme që id të vijë në POST -->
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input class="form-control" type="text" th:field="*{name}" required placeholder="e.g. Sugar"/>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Unit</label>
+            <select class="form-select" th:field="*{unit}">
+              <option th:each="u : ${units}" th:value="${u}" th:text="${u}"></option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="3" th:field="*{description}" placeholder="Optional notes about this supply"></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Reorder level</label>
+            <input class="form-control" type="number" min="0" th:field="*{reorderLevel}" placeholder="e.g. 10"/>
+            <div class="form-text">When stock drops to this level, you should reorder.</div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Current stock</label>
+            <input class="form-control" type="number" min="0" th:field="*{currentStock}" placeholder="e.g. 25"/>
+          </div>
+        </div>
+
+        <hr class="my-4"/>
+
+        <div class="d-flex gap-2 justify-content-end">
+          <a class="btn btn-outline-secondary" th:href="@{/supplies}">Cancel</a>
+          <button class="btn btn-primary" type="submit">
+            Save
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

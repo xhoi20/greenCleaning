@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${detailTitle}">Detajet e porosisë</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/orders}">LaundryApp</a>
+        <div class="ms-auto text-white">
+            <span th:if="${firstName != null}">
+                Përdoruesi: <b th:text="${firstName}">User</b>
+                (<span th:text="${role}">ROLI</span>)
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h2 class="mb-4" th:text="${detailTitle}">Detajet e porosisë</h2>
+
+    <!-- ===================== -->
+    <!--    INFO E POROSISË    -->
+    <!-- ===================== -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Informacion bazë
+        </div>
+        <div class="card-body row">
+            <div class="col-md-6">
+                <p>
+                    <strong>Porosia #</strong>
+                    <span th:text="${order.id}">1</span>
+                </p>
+                <p>
+                    <strong>Klienti:</strong>
+                    <!-- Kur ekziston order dhe customer -->
+                    <span th:if="${order != null and order.customer != null}"
+                          th:text="|${order.customer.firstName} ${order.customer.lastName}|">
+                        Emri Mbiemri
+                    </span>
+                    <!-- Kur NUK ka customer -->
+                    <span th:if="${order == null or order.customer == null}">
+                        N/A
+                    </span>
+                </p>
+                <p>
+                    <strong>Statusi:</strong>
+                    <span th:text="${order.status}">RECEIVED</span>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <strong>Data dorëzimit:</strong>
+                    <span th:text="${order.dropoffDate != null ? #temporals.format(order.dropoffDate, 'dd.MM.yyyy') : 'N/A'}">
+                        01.01.2025
+                    </span>
+                </p>
+                <p>
+                    <strong>Data marrjes:</strong>
+                    <span th:text="${order.pickupDate != null ? #temporals.format(order.pickupDate, 'dd.MM.yyyy') : '-'}">
+                        -
+                    </span>
+                </p>
+                <p>
+                    <strong>Totali:</strong>
+                    <span th:text="${order.totalAmount}">0.00</span> €
+                </p>
+            </div>
+            <div class="col-12 mt-2">
+                <p>
+                    <strong>Shënime:</strong>
+                    <span th:text="${order.notes != null ? order.notes : '-'}">-</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!--    PUNONJËSIT         -->
+    <!-- ===================== -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Punonjësit e përfshirë
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Emri</th>
+                    <th>Telefoni</th>
+                    <th>Roli</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="emp : ${employees}">
+                    <td th:text="${emp.firstName + ' ' + emp.lastName}">Emri Mbiemri</td>
+                    <td th:text="${emp.phone}">+355...</td>
+                    <td th:text="${emp.role}">ADMIN</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(employees)}">
+                    <td colspan="3" class="text-center text-muted">Nuk ka punonjës të lidhur me këtë porosi.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!--   ARTIKUJT E ORDER-IT -->
+    <!-- ===================== -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Artikujt e porosisë
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Artikulli</th>
+                    <th>Sasia</th>
+                    <th>Çmimi/Unit</th>
+                    <th>Nëntotali</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${orderItems}">
+                    <!-- nga OrderItem: itemDescription, quantity, unitPrice, subtotal -->
+                    <td th:text="${item.itemDescription}">Këmishë</td>
+                    <td th:text="${item.quantity}">1</td>
+                    <td th:text="${item.unitPrice}">0.00</td>
+                    <td th:text="${item.subtotal}">0.00</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orderItems)}">
+                    <td colspan="4" class="text-center text-muted">Nuk ka artikuj për këtë porosi.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!--   SHËRBIMET           -->
+    <!-- ===================== -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Shërbimet e aplikuara
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Artikulli</th>
+                    <th>Shërbimi</th>
+                    <th>Sasia</th>
+                    <th>Çmimi</th>
+                    <th>Nëntotali</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="srv : ${orderServices}">
+                    <!-- nga OrderService: orderItem, service (Services), serviceName, quantity, price -->
+                    <td th:text="${srv.orderItem.itemDescription}">Këmishë</td>
+                    <!-- Nëse serviceName është null, merret emri nga Services.name -->
+<!--                    <td th:text="${srv.serviceName != null ? srv.serviceName : (srv.service != null ? srv.service.name : 'N/A')}">-->
+<!--                        Larje-->
+<!--                    </td>-->
+<!--                    <td th:text="${srv.serviceName != null ? srv.serviceName : 'N/A'}">-->
+<!--                        Larje-->
+<!--                    </td>-->
+                    <td>
+                        <!-- Nëse serviceName është i plotësuar në OrderService, përdore atë -->
+                        <span th:if="${srv.serviceName != null}"
+                              th:text="${srv.serviceName}">
+        Larje
+    </span>
+
+                        <!-- Përndryshe përdor emrin nga Services.name (tani është fetch-uar) -->
+                        <span th:if="${srv.serviceName == null}"
+                              th:text="${srv.service != null ? srv.service.name : 'N/A'}">
+        Larje
+    </span>
+                    </td>
+                    <td th:text="${srv.quantity}">1</td>
+                    <td th:text="${srv.price}">0.00</td>
+                    <td th:text="${srv.price != null ? srv.price * srv.quantity : 0}">0.00</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(orderServices)}">
+                    <td colspan="5" class="text-center text-muted">Nuk ka shërbime për këtë porosi.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!--   PAGESAT             -->
+    <!-- ===================== -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Pagesat
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0">
+                <thead>
+                <tr>
+                    <th>Shuma</th>
+                    <th>Mënyra e pagesës</th>
+                    <th>Data</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pay : ${payments}">
+                    <td th:text="${pay.amount}">0.00</td>
+                    <td th:text="${pay.paymentMethod}">CASH</td>
+                    <td th:text="${#temporals.format(pay.paymentDate, 'dd.MM.yyyy HH:mm')}">
+                        01.01.2025 12:00
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(payments)}">
+                    <td colspan="3" class="text-center text-muted">Nuk ka pagesa të regjistruara.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <a class="btn btn-secondary" th:href="@{/orders}">⟵ Kthehu te porositë</a>
+    </div>
+
+</div>
+
+</body>
+</html>

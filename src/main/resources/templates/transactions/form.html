@@ -1,0 +1,139 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title>New Transaction</title>-->
+<!--  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>-->
+
+<!--</head>-->
+<!--<body>-->
+<!--<h1>New Transaction for Supply:-->
+<!--  <span th:text="${supply.name}"></span>-->
+<!--</h1>-->
+
+<!--<form th:action="@{/transactions}" method="post" th:object="${transaction}">-->
+
+<!--  &lt;!&ndash; supplyId i fshehur &ndash;&gt;-->
+<!--  <input type="hidden" th:field="*{supplyId}"/>-->
+
+<!--  <label>Transaction Type:</label>-->
+<!--  <select th:field="*{transactionType}">-->
+<!--    <option th:each="tt : ${transactionTypes}"-->
+<!--            th:value="${tt}"-->
+<!--            th:text="${tt}">-->
+<!--    </option>-->
+<!--  </select>-->
+<!--  <br/>-->
+
+<!--  <label>Quantity:</label>-->
+<!--  <input type="number" th:field="*{quantity}" required/>-->
+<!--  <br/>-->
+
+<!--  <label>Notes:</label>-->
+<!--  <textarea th:field="*{notes}"></textarea>-->
+<!--  <br/>-->
+
+<!--  <button type="submit">Save</button>-->
+<!--  <a th:href="@{'/transactions/supply/' + ${supply.id}}">Cancel</a>-->
+<!--</form>-->
+
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>New Transaction</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <style>
+    body { background: #f6f8fb; }
+    .page-title { font-weight: 700; }
+    .card { border: 0; box-shadow: 0 10px 30px rgba(0,0,0,.06); border-radius: 16px; }
+    .form-label { font-weight: 600; }
+  </style>
+</head>
+
+<body>
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="page-title mb-1">New Transaction</h1>
+      <div class="text-muted">
+        For supply: <span class="fw-semibold" th:text="${supply.name}"></span>
+      </div>
+    </div>
+
+    <!-- ✅ FIX: Back te /inventory-transactions -->
+    <a class="btn btn-outline-secondary"
+       th:href="@{'/inventory-transactions/supply/' + ${supply.id}}">
+      ← Back
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+
+      <!-- ✅ FIX: POST te /inventory-transactions -->
+      <form th:action="@{/inventory-transactions}" method="post" th:object="${transaction}">
+        <!-- supplyId i fshehur -->
+        <input type="hidden" th:field="*{supplyId}"/>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Transaction Type</label>
+            <select class="form-select" th:field="*{transactionType}">
+              <option th:each="tt : ${transactionTypes}"
+                      th:value="${tt}"
+                      th:text="${tt}">
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Quantity</label>
+            <input class="form-control"
+                   type="number"
+                   min="1"
+                   th:field="*{quantity}"
+                   required
+                   placeholder="e.g. 5"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Unit Cost (only for PURCHASE)</label>
+            <input class="form-control"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   th:field="*{unitCost}"
+                   placeholder="e.g. 2.50"/>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control"
+                      rows="3"
+                      th:field="*{notes}"
+                      placeholder="Optional notes (e.g. supplier invoice #)"></textarea>
+          </div>
+        </div>
+
+        <hr class="my-4"/>
+
+        <div class="d-flex gap-2 justify-content-end">
+          <!-- ✅ FIX: Cancel te /inventory-transactions -->
+          <a class="btn btn-outline-secondary"
+             th:href="@{'/inventory-transactions/supply/' + ${supply.id}}">
+            Cancel
+          </a>
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

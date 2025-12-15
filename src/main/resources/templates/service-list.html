@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Lista e Shërbimeve</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container mt-4">
+  <h1>Lista e Shërbimeve</h1>
+  <a th:href="@{/services/add}" class="btn btn-primary mb-3">Shto Shërbim të Ri</a>
+  <div class="mb-2">
+    <a th:href="@{/main-list}" class="btn btn-warning btn-sm me-2">FAQJA KRYESORE</a>
+  </div>
+  <div th:if="${firstName}">
+    <p>Mirë se vini, <span th:text="${firstName}"></span>! (Roli: <span th:text=" ${role}"></span>)</p>
+    <a th:href="@{/logout}">Dil</a>
+  </div>
+  <div th:if="${services?.isEmpty()}">
+    <p class="alert alert-info">Nuk ka shërbime. <a th:href="@{/services/add}">Shto të parin!</a></p>
+  </div>
+  <div th:each="service : ${services}" class="card mb-3">
+    <div class="card-body">
+      <h6 th:text="${service.name}">Emri</h6>
+      <p th:text="${service.description ?: 'Nuk ka përshkrim'}">Përshkrimi</p>
+      <p>Çmim: <span th:text="${service.pricePerUnit} + ' €'">0 €</span> | Kohë e parashikuar: <span th:text=" ${service.estimatedTime ?: 'N/A'}">N/A</span></p>
+      <span th:if="${role == 'ADMIN'}">
+                <a th:href="@{/services/edit/{id}(id=${service.id})}" class="btn btn-warning btn-sm me-1">Ndrysho</a>
+                <a th:href="@{/services/delete/{id}(id=${service.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Je i sigurt?')">Fshij</a>
+            </span>
+    </div>
+  </div>
+  <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text=" ${errorMessage}">Gabim</div>
+  <div th:if="${successMessage}" class="alert alert-success mt-3" th:text=" ${successMessage}">Sukses</div>
+</div>
+</body>
+</html>

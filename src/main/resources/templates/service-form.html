@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shto Shërbim të Ri</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Shto Shërbim të Ri</h1>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <form th:action="@{/services/add}" th:object="${serviceCreateDTO}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Emri *</label>
+            <input type="text" th:field="*{name}" class="form-control" required/>
+            <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Përshkrimi</label>
+            <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" class="text-danger" th:errors="*{description}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Çmimi për Njës ( € ) *</label>
+            <input type="number" step="0.01" th:field="*{pricePerUnit}" class="form-control" min="0" required/>
+            <div th:if="${#fields.hasErrors('pricePerUnit')}" class="text-danger" th:errors="*{pricePerUnit}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Lloji i Njësisë</label>
+            <select th:field="*{unitType}" class="form-control">
+                <option value="">Zgjidh...</option>
+                <option value="ITEM">Per Item</option>
+                <option value="KG">Per KG</option>
+                <!-- Shto më shumë nëse ke enum të zgjeruar -->
+            </select>
+            <div th:if="${#fields.hasErrors('unitType')}" class="text-danger" th:errors="*{unitType}"></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Kohë e Parashikuar (orë)</label>
+            <input type="number" th:field="*{estimatedTime}" class="form-control" min="0" step="0.5"/>
+            <div th:if="${#fields.hasErrors('estimatedTime')}" class="text-danger" th:errors="*{estimatedTime}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Ruaj </button>
+        <a th:href="@{/services}" class="btn btn-secondary">Kthehu</a>
+    </form>
+</div>
+</body>
+</html>

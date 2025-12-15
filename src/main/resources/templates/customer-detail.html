@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Detajet e Klientit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+  <h1>Detajet e Klientit</h1>
+  <div th:if="${firstName}">
+    <p>Mirë se vini, <span th:text="${firstName}"></span>! (Roli: <span th:text="${role}"></span>)</p>
+    <a th:href="@{/login}">Dil</a>
+  </div>
+
+  <div th:if="${searchResult}" class="alert alert-info" th:text="${searchResult}">Rezultati i kërkimit</div>
+
+  <div th:if="${customer != null}" class="card mb-4">
+    <div class="card-body">
+      <p><strong>ID:</strong> <span th:text="${customer.id}"></span></p>
+      <p><strong>Emri:</strong> <span th:text="${customer.firstName}"></span></p>
+      <p><strong>Mbiemri:</strong> <span th:text="${customer.lastName}"></span></p>
+      <p><strong>Telefoni:</strong> <span th:text="${customer.phone}"></span></p>
+      <p><strong>Email:</strong> <span th:text="${customer.email ?: 'N/A'}"></span></p>
+      <p><strong>Adresa:</strong> <span th:text="${customer.address ?: 'N/A'}"></span></p>
+      <p><strong>Data e Krijimit:</strong> <span th:text="${customer.createdAt != null ? #temporals.format(customer.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}"></span></p>
+    </div>
+  </div>
+
+  <div th:unless="${customer != null}" class="alert alert-warning">
+    <p>Nuk u gjet klient me këtë telefon.</p>
+  </div>
+
+  <!-- Seksioni për Porositë e Klientit -->
+  <div th:if="${customer != null && orders != null && !orders.isEmpty()}" class="card">
+    <div class="card-header">
+      <h3>Porositë e Klientit</h3>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>ID e Porosisë</th>
+          <th>Data e Marrjes</th>
+          <th>Totali</strong></th>
+          <th>Statusi</th>
+          <th>Veprime</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+          <td th:text="${order.id}"></td>
+          <td th:text="${order.pickupDate != null ? #temporals.format(order.pickupDate, 'yyyy-MM-dd') : 'N/A'}"></td>
+          <td th:text="${order.totalAmount}"></td>
+          <td th:text="${order.status}"></td>
+          <td>
+<!--            <a th:href="@{/orders/detail/{id}(id=${order.id})}" class="btn btn-info btn-sm">Detaje</a>-->
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div th:if="${customer != null && (orders == null || orders.isEmpty())}" class="alert alert-info">
+    <p>Ky klient nuk ka porosi ende.</p>
+  </div>
+
+  <a th:href="@{/customers/customer-list}" class="btn btn-secondary">Kthehu në Listë</a>
+  <div th:if="${customer != null}">
+    <a th:href="@{/customers/edit/{id}(id=${customer.id})}" class="btn btn-warning">Ndrysho</a>
+    <a th:href="@{/customers/delete/{id}(id=${customer.id})}" class="btn btn-danger" onclick="return confirm('Je i sigurt?')">Fshij</a>
+  </div>
+
+  <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}">Gabim</div>
+  <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}">Sukses</div>
+</div>
+</body>
+</html>

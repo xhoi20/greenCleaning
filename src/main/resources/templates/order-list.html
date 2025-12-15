@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista e Porosisë</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        /* CSS shtesë për cards */
+        .order-card {
+            border-left: 4px solid #007bff;
+        }
+        .order-label {
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        .order-value {
+            font-weight: 500;
+        }
+        .status-badge {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 th:text="${pageTitle ?: 'Lista e Porosisë'}">Lista e Porosisë</h1>
+    <div class="mb-2">
+        <a th:href="@{/main-list}" class="btn btn-warning btn-sm me-2">FAQJA KRYESORE</a>
+    </div>
+
+    <a th:href="@{/orders/add}" class="btn btn-primary mb-3">Shto Porosi</a>
+
+    <!--    &lt;!&ndash; Filter opsionale për Status &ndash;&gt;-->
+    <!--    <form th:action="@{/orders/by-status}" method="get" class="mb-3 d-flex gap-2" style="max-width: 300px;">-->
+    <!--        <input type="text" name="status" placeholder="Fut statusin (p.sh., RECEIVED)" class="form-control" />-->
+    <!--        <button type="submit" class="btn btn-outline-secondary">Filtr nga Status</button>-->
+    <!--    </form>-->
+
+    <!--    &lt;!&ndash; Filter opsionale për Customer ID &ndash;&gt;-->
+    <!--    <form th:action="@{/orders/by-customer}" method="get" class="mb-3 d-flex gap-2" style="max-width: 300px;">-->
+    <!--        <input type="number" name="customerId" placeholder="Fut ID të klientit" class="form-control" />-->
+    <!--        <button type="submit" class="btn btn-outline-secondary">Filtr nga Klient</button>-->
+    <!--    </form>-->
+
+    <div th:if="${firstName}">
+        <p>Mirë se vini, <span th:text="${firstName}"></span>! (Roli: <span th:text="${role}"></span>)</p>
+        <a th:href="@{/logout}">Dil</a>
+    </div>
+    <!--    <div th:if="${statusFilter}">-->
+    <!--        <p>Porositë e filtruar sipas statusit: <span th:text="${statusFilter}"></span>.</p>-->
+    <!--    </div>-->
+    <!--    <div th:if="${customerIdFilter}">-->
+    <!--        <p>Porositë e filtruar sipas klientit ID: <span th:text="${customerIdFilter}"></span>.</p>-->
+    <!--    </div>-->
+
+    <!-- Lista e porosive me Cards (pa table) -->
+    <div th:if="${orders?.isEmpty()}">
+        <p class="alert alert-info">Nuk ka porosi.</p>
+    </div>
+    <div th:each="order : ${orders}" class="order-card card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="card-title mb-0 order-value" th:text="'Porosia ID: ' + ${order.id}"></h6>
+            <span class="badge bg-secondary status-badge" th:text="${order.status ?: 'N/A'}">Status</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <span class="order-label">Klient:</span>
+                        <span class="order-value ms-2" th:if="${order.customer != null}">
+                            <span th:text="${order.customer.firstName} + ' ' + ${order.customer.lastName}"></span>
+                            <small class="text-muted d-block" th:text="'(' + ${order.customer.phone} + ')'"></small>
+                        </span>
+                        <span class="order-value ms-2" th:else>ID Klient: <span th:text="${order.customer?.id ?: 'N/A'}"></span></span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="order-label">Data Dorëzimit:</span>
+                        <span class="order-value ms-2" th:text="${order.dropoffDate != null ? #temporals.format(order.dropoffDate, 'yyyy-MM-dd') : 'N/A'}"></span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="order-label">Data Marrjes:</span>
+                        <span class="order-value ms-2" th:text="${order.pickupDate != null ? #temporals.format(order.pickupDate, 'yyyy-MM-dd') : 'N/A'}"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <span class="order-label">Totali:</span>
+                        <span class="order-value ms-2" th:text="${order.totalAmount != null ? #numbers.formatDecimal(order.totalAmount, 1, 2) + ' €' : '0.00 €'}"></span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="order-label">Shënime:</span>
+                        <span class="order-value ms-2" th:text="${order.notes ?: 'N/A'}"></span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="order-label">Data Krijimit:</span>
+                        <span class="order-value ms-2" th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- Butonat e veprimeve -->
+            <div class="mt-3">
+                <!--                <a th:href="@{/orders/detail/{id}(id=${order.id})}" class="btn btn-info btn-sm me-1">Detaje</a>-->
+                <a th:href="@{/orders/detail/{id}(id=${order.id})}"
+                   class="btn btn-info btn-sm me-1">
+                    Detaje
+                </a>
+                <span th:if="${role == 'ADMIN'}">
+                    <a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm me-1">Ndrysho</a>
+                    <a th:href="@{/orders/delete/{id}(id=${order.id})}" class="btn btn-danger btn-sm me-1" onclick="return confirm('Je i sigurt?')">Fshij</a>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}">Gabim</div>
+    <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}">Sukses</div>
+</div>
+</body>
+</html>
+
