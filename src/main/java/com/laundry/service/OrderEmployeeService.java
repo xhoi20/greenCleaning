@@ -1,10 +1,7 @@
 package com.laundry.service;
 
 
-import com.laundry.entity.OrderEmployee;
-import com.laundry.entity.Order;
-import com.laundry.entity.Employee;
-import com.laundry.entity.AssignedRole;
+import com.laundry.entity.*;
 import com.laundry.dto.OrderEmployeeCreateDTO; // Asumo DTO me orderId, employeeId, assignedRole
 import com.laundry.dto.OrderEmployeeUpdateDTO; // Asumo DTO me assignedRole (për update)
 import com.laundry.repository.OrderEmployeeRepository; // Asumo ekziston me extends JpaRepository
@@ -61,8 +58,9 @@ public class OrderEmployeeService extends BaseService implements IOrderEmployeeS
             if (employeeOpt.isEmpty()) {
                 return createErrorResponse("Employee not found", HttpStatus.NOT_FOUND);
             }
+            getAuthenticatedEmployee();
 
-            getAuthenticatedUser();
+          //  getAuthenticatedUser();
 
             OrderEmployee newAssignment = new OrderEmployee();
             newAssignment.setOrder(orderOpt.get());

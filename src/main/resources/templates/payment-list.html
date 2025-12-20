@@ -7,9 +7,9 @@
 <body>
 <div class="container mt-4">
     <h1>Lista e Pagesave</h1>
-
+    <div th:if="${role == 'ADMIN'}">
     <a th:href="@{/payments/add}" class="btn btn-primary mb-3">Shto Pagesë të Re</a>
-
+    </div>
     <div class="mb-2">
         <a th:href="@{/main-list}" class="btn btn-warning btn-sm me-2">FAQJA KRYESORE</a>
     </div>

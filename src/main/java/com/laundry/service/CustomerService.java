@@ -43,7 +43,8 @@ public class CustomerService extends BaseService implements ICustomerService {
             if (existingCustomer.isPresent()) {
                 return createErrorResponse("Customer with this phone already exists", HttpStatus.BAD_REQUEST);
             }
-            getAuthenticatedUser();
+            getAuthenticatedEmployee();
+//            getAuthenticatedUser();
             // Krijo entity të re nga DTO DHE set-o timestamps KËTU
             Customer newCustomer = new Customer();  // <- Entity e re
             newCustomer.setFirstName(request.getFirstName());
@@ -68,7 +69,8 @@ public class CustomerService extends BaseService implements ICustomerService {
     public ResponseEntity<Map<String, Object>> updateCustomer(Integer id, CustomerUpdateRequest updateRequest) {
         try {
             // Validime...
-            getAuthenticatedUser();
+          //  getAuthenticatedUser();
+            getAuthenticatedEmployee();
             Optional<Customer> customerOptional = customerRepository.findById(id);
             if (customerOptional.isPresent()) {
                 Customer customer = customerOptional.get();

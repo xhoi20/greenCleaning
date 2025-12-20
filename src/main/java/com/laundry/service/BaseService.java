@@ -1,6 +1,7 @@
 package com.laundry.service;
 
 import com.laundry.entity.Employee;
+import com.laundry.entity.EmployeeRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.laundry.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +23,68 @@ public abstract class BaseService {
 
     @Autowired
     protected EmployeeRepository employeeRepository;
+//
+//    protected Employee getAuthenticatedUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            throw new SecurityException("Authentication required");
+//        }
+//
+//        String firstname = authentication.getName();
+//        Employee employeeOpt = employeeRepository.findByFirstName(firstname);
+//        if (employeeOpt == null) {
+//            throw new UsernameNotFoundException("Employee not found: " + firstname);  // Check manual null
+//        }
+//        Employee employee = employeeOpt;
+//        if (!employee.getRole().equals(ADMIN)) {
+//            throw new SecurityException("Only an admin can perform this operation.");
+//        }
+//
+//        return employee;
+//    }
 
-    protected Employee getAuthenticatedUser() {
+
+    protected Employee getAuthenticatedEmployee() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
             throw new SecurityException("Authentication required");
         }
 
         String firstname = authentication.getName();
-        Employee employeeOpt = employeeRepository.findByFirstName(firstname);
-        if (employeeOpt == null) {
-            throw new UsernameNotFoundException("Employee not found: " + firstname);  // Check manual null
-        }
-        Employee employee = employeeOpt;
-        if (!employee.getRole().equals(ADMIN)) {
-            throw new SecurityException("Only an admin can perform this operation.");
+        Employee employee = employeeRepository.findByFirstName(firstname);
+
+        if (employee == null) {
+            throw new UsernameNotFoundException("Employee not found: " + firstname);
         }
 
         return employee;
+    }
+
+    /**
+     * Admin-only (emri i vjetër). Nëse e thërret, kërkon ADMIN.
+     */
+    protected Employee getAuthenticatedUser() {
+        Employee employee = getAuthenticatedEmployee();
+        if (employee.getRole() != ADMIN) {
+            throw new SecurityException("Only an admin can perform this operation.");
+        }
+        return employee;
+    }
+
+    /**
+     * Kontroll fleksibël: lejo vetëm rolet që do.
+     */
+    protected Employee requireAnyRole(EmployeeRole... roles) {
+        Employee employee = getAuthenticatedEmployee();
+
+        for (EmployeeRole role : roles) {
+            if (employee.getRole() == role) {
+                return employee;
+            }
+        }
+        throw new SecurityException("You are not allowed to perform this operation.");
     }
 
     protected <T> ResponseEntity<Map<String, Object>> createSuccessResponse(T data, String message, HttpStatus status) {
