@@ -54,8 +54,9 @@ public class OrderItemService extends BaseService implements IOrderItemService {
             throw new IllegalArgumentException("Order with this ID does not exist");
         }
         Order order = orderOpt.get();
+        getAuthenticatedEmployee();
 
-        getAuthenticatedUser();
+       // getAuthenticatedUser();
 
         // Krijo entity të re nga DTO
         OrderItem newItem = new OrderItem();

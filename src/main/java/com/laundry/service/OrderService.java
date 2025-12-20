@@ -54,7 +54,7 @@ public class OrderService extends BaseService implements IOrderService {
                 return createErrorResponse("Customer with this ID does not exist", HttpStatus.BAD_REQUEST);
 
             Customer customer = customerOpt.get();
-            //getAuthenticatedUser(); // keep if you use it for security checks
+            //getAuthenticatedUser();
 
             // --- CREATE ORDER (WITHOUT TOTAL YET) ---
             Order newOrder = new Order();
@@ -83,7 +83,14 @@ public class OrderService extends BaseService implements IOrderService {
             OrderEmployeeCreateDTO assignmentDto = new OrderEmployeeCreateDTO();
             assignmentDto.setOrderId(savedOrder.getId());
             assignmentDto.setEmployeeId(employee.getId());
-            assignmentDto.setAssignedRole(AssignedRole.ADMIN); // or RECEIVER, etc.
+           // assignmentDto.setAssignedRole(AssignedRole.ADMIN);
+            AssignedRole assignedRole = switch (employee.getRole()) {
+                case ADMIN -> AssignedRole.ADMIN;
+                case CLEANER -> AssignedRole.CLEANER;
+                case DELIVERY -> AssignedRole.DELIVERY;
+            };
+
+            assignmentDto.setAssignedRole(assignedRole);
 
             ResponseEntity<Map<String, Object>> assignmentResponse =
                     orderEmployeeService.createOrderEmployee(assignmentDto);

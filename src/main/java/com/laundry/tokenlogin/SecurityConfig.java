@@ -120,13 +120,14 @@ public class SecurityConfig {
 
                         // Payments (si i kishe, por pa duplikim)
                         .requestMatchers("/payments", "/payments/view/**")
-                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_CASHIER", "ROLE_DELIVERY")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_CLEANER", "ROLE_DELIVERY")
                         .requestMatchers("/payments/add", "/orders/add")
-                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_CASHIER")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_ CLEANER")
 
                         // Këto faqe thjesht duhet të jenë të autentikuara
                         .requestMatchers(
                                 "/customers/customer-list",
+                                "/customers/customer-form",
                                 "/employees/employee-list",
                                 "/orders",
                                 "/order-items",
@@ -134,7 +135,7 @@ public class SecurityConfig {
                                 "/services",
                                 "/customers/edit/**",
                                 "/customers/customer-form",
-                                "/supplies/**",          // <-- u zëvendësua /supplies me /supplies/**
+                                "/supplies/**",
                                 "/transactions/**",
                                 "/inventory-transactions/**",
                                 "/payments",
@@ -154,12 +155,12 @@ public class SecurityConfig {
 
                         // Admin-only forma për krijime
                         .requestMatchers(
-                                "/customers/customer-form",
+//                                "/customers/customer-form",
                                 "/employees/employee-form",
-                                //"/orders/add",
+
                                 "/order-items/add",
                                 "/services/add",
-                                "/supplies/add"          // supply add mbetet admin-only
+                                "/supplies/add"
                         ).hasAnyAuthority("ROLE_ADMIN")
 
                         .anyRequest().authenticated()

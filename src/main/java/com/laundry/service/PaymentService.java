@@ -2,6 +2,7 @@ package com.laundry.service;
 
 import com.laundry.dto.PaymentCreateDTO;
 import com.laundry.dto.PaymentUpdateDTO;
+import com.laundry.entity.EmployeeRole;
 import com.laundry.entity.Payment;
 import com.laundry.entity.Order;
 import com.laundry.entity.PaymentStatus;
@@ -51,8 +52,9 @@ public ResponseEntity<Map<String, Object>> createPayment(PaymentCreateDTO reques
         if (orderOpt.isEmpty()) {
             return createErrorResponse("Order not found", HttpStatus.NOT_FOUND);
         }
+        getAuthenticatedEmployee();
 
-        getAuthenticatedUser();
+       //getAuthenticatedUser();
 
         Payment newPayment = Payment.builder()
                 .order(orderOpt.get())
